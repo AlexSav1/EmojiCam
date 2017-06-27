@@ -52,18 +52,51 @@
                     <connections>
                         <outlet property="camPreview" destination="25m-tl-P3v" id="lCJ-aB-8mf"/>
                         <outlet property="recordButton" destination="uSG-Io-Dl3" id="8L6-oC-XgI"/>
+                        <segue destination="RlV-am-vU1" kind="show" identifier="showPic" id="05w-PW-ZpE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1079.2" y="138.98050974512745"/>
         </scene>
+        <!--Pic Preview View Controller-->
+        <scene sceneID="TIM-eb-ANp">
+            <objects>
+                <viewController id="RlV-am-vU1" customClass="PicPreviewViewController" customModule="EmojiCam" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="K5S-tV-8Zw"/>
+                        <viewControllerLayoutGuide type="bottom" id="HIy-hO-n2g"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="D79-z0-Ram">
+                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="j5G-7A-RNC">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="HIy-hO-n2g" firstAttribute="top" secondItem="j5G-7A-RNC" secondAttribute="bottom" id="5W3-wP-4oc"/>
+                            <constraint firstItem="j5G-7A-RNC" firstAttribute="top" secondItem="K5S-tV-8Zw" secondAttribute="bottom" id="COP-FX-0pc"/>
+                            <constraint firstItem="j5G-7A-RNC" firstAttribute="leading" secondItem="D79-z0-Ram" secondAttribute="leading" id="GZp-ou-f6v"/>
+                            <constraint firstAttribute="trailing" secondItem="j5G-7A-RNC" secondAttribute="trailing" id="Z9k-3f-w5o"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="j5G-7A-RNC" id="46E-8H-ocf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KsI-ob-cCH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1818" y="141"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="7nJ-Np-Stn">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="A9X-0O-dF4" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" translucent="NO" id="P5l-Xo-RKU">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="P5l-Xo-RKU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

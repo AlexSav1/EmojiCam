@@ -12,6 +12,7 @@
 		AA6E4E5E1EFC669E0005B263 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA6E4E5C1EFC669E0005B263 /* Main.storyboard */; };
 		AA6E4E601EFC669E0005B263 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA6E4E5F1EFC669E0005B263 /* Assets.xcassets */; };
 		AA6E4E631EFC669E0005B263 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA6E4E611EFC669E0005B263 /* LaunchScreen.storyboard */; };
+		AA6E4E741F02C0200005B263 /* PicPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6E4E731F02C0200005B263 /* PicPreviewViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		AA6E4E5F1EFC669E0005B263 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA6E4E621EFC669E0005B263 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA6E4E641EFC669E0005B263 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA6E4E731F02C0200005B263 /* PicPreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicPreviewViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 				AA6E4E581EFC669E0005B263 /* AppDelegate.swift */,
 				AA6E4E5A1EFC669E0005B263 /* ViewController.swift */,
 				AA6E4E5C1EFC669E0005B263 /* Main.storyboard */,
+				AA6E4E731F02C0200005B263 /* PicPreviewViewController.swift */,
 				AA6E4E5F1EFC669E0005B263 /* Assets.xcassets */,
 				AA6E4E611EFC669E0005B263 /* LaunchScreen.storyboard */,
 				AA6E4E641EFC669E0005B263 /* Info.plist */,
@@ -138,6 +141,7 @@
 			files = (
 				AA6E4E5B1EFC669E0005B263 /* ViewController.swift in Sources */,
 				AA6E4E591EFC669E0005B263 /* AppDelegate.swift in Sources */,
+				AA6E4E741F02C0200005B263 /* PicPreviewViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +305,7 @@
 				AA6E4E691EFC669E0005B263 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

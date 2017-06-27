@@ -33,12 +33,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     var videoDataOutputQueue = DispatchQueue(label: "VideoDataOutputQueue")
     
     //core image stuff
-    var faceDetector = CIDetector()
+    var faceDetector: CIDetector!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //self.videoCollectionVC = VideoCollectionViewController()
+        let accuracy = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
+        faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: accuracy)
+        
         if setupSession() {
             setupPreview()
             startSession()
@@ -64,7 +66,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             captureSession.addOutput(videoDataOutput)
         }
         
-        videoDataOutput.connection(withMediaType: AVMediaTypeVideo).isEnabled = true
+        guard let connection = videoDataOutput.connection(withMediaType: AVFoundation.AVMediaTypeVideo) else { return }
+        guard connection.isVideoOrientationSupported else { return }
+        guard connection.isVideoMirroringSupported else { return }
+        connection.videoOrientation = .portrait
+        connection.isVideoMirrored = false
+        
+        //videoDataOutput.connection(withMediaType: AVMediaTypeVideo).isEnabled = true
     
         videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
         
@@ -86,7 +94,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     
     func setupSession() -> Bool {
         
-        captureSession.sessionPreset = AVCaptureSessionPresetHigh
+        captureSession.sessionPreset = AVCaptureSessionPresetMedium
         
         // Setup Camera
         let camera = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
@@ -251,11 +259,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     
     func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
         //captured every frame
-        let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
         
         let attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate) as? [String: Any]
         
-        let ciImage = CIImage(cvImageBuffer: imageBuffer!, options: attachments)
+        let ciImage = CIImage(cvPixelBuffer: imageBuffer, options: attachments)
+
         
         
         let features = faceDetector.features(in: ciImage)
@@ -263,9 +274,23 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
         let fdescript = CMSampleBufferGetFormatDescription(sampleBuffer)
         let cleanAperture = CMVideoFormatDescriptionGetCleanAperture(fdescript!, false)
         
-        findFace(features: features, forVideoBox: cleanAperture)
+        //self.stopSession()
+        
+        DispatchQueue.main.async {
+            self.detect(features: features, forVideoBox: cleanAperture, inImage: ciImage)
+            //self.performSegue(withIdentifier: "showPic", sender: ciImage)
+        }
+        
+        
+        
+        
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! PicPreviewViewController
+        
+        vc.theImage = sender as! CIImage
+    }
     
     //MARK: - Face
     
@@ -275,6 +300,56 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             print(feature.type)
         }
         
+    }
+    
+    func detect(features:[CIFeature], forVideoBox clearAperture: CGRect, inImage ciImage: CIImage) {
+        
+        
+        // For converting the Core Image Coordinates to UIView Coordinates
+        
+        let ciImageSize = ciImage.extent.size
+        
+        var transform = CGAffineTransform(scaleX: 1, y: -1)
+        transform = transform.translatedBy(x: 0, y: -ciImageSize.height)
+        
+        
+        for face in features as! [CIFaceFeature] {
+            
+            print("Found bounds are \(face.bounds)")
+            
+            // Apply the transform to convert the coordinates
+            var faceViewBounds = face.bounds.applying(transform)
+            //var faceViewBounds = face.bounds
+            
+            // Calculate the actual position and size of the rectangle in the image view
+            let viewSize = camPreview.bounds.size
+            
+            let scale = min(viewSize.width / ciImageSize.width,
+                            viewSize.height / ciImageSize.height)
+            let offsetX = (viewSize.width - ciImageSize.width * scale) / 2
+            let offsetY = (viewSize.height - ciImageSize.height * scale) / 2
+            
+            
+            //faceViewBounds = CGRectApplyAffineTransform(faceViewBounds, CGAffineTransformMakeScale(scale, scale))
+            faceViewBounds = faceViewBounds.applying(CGAffineTransform(scaleX: scale, y: scale))
+            faceViewBounds.origin.x += offsetX
+            faceViewBounds.origin.y += offsetY
+            
+            let faceBox = UIView(frame: faceViewBounds)
+            
+            faceBox.layer.borderWidth = 3
+            faceBox.layer.borderColor = UIColor.red.cgColor
+            faceBox.backgroundColor = UIColor.clear
+            camPreview.addSubview(faceBox)
+            
+            if face.hasLeftEyePosition {
+                print("Left eye bounds are \(face.leftEyePosition)")
+            }
+            
+            if face.hasRightEyePosition {
+                print("Right eye bounds are \(face.rightEyePosition)")
+            }
+        }
     }
 }
 
