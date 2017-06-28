@@ -32,6 +32,12 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     
     var videoDataOutputQueue = DispatchQueue(label: "VideoDataOutputQueue")
     
+    let emojiFace = UIImage(named: "face")
+    
+    var faceCount = 0
+    
+    var faceImageView: UIImageView?
+    
     //core image stuff
     var faceDetector: CIDetector!
     
@@ -71,6 +77,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
         guard connection.isVideoMirroringSupported else { return }
         connection.videoOrientation = .portrait
         connection.isVideoMirrored = false
+        
         
         //videoDataOutput.connection(withMediaType: AVMediaTypeVideo).isEnabled = true
     
@@ -321,7 +328,11 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             var faceViewBounds = face.bounds.applying(transform)
             //var faceViewBounds = face.bounds
             
+            //let faceBox = UIView(frame: face.bounds)
+            
             // Calculate the actual position and size of the rectangle in the image view
+            
+            /*
             let viewSize = camPreview.bounds.size
             
             let scale = min(viewSize.width / ciImageSize.width,
@@ -329,18 +340,37 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             let offsetX = (viewSize.width - ciImageSize.width * scale) / 2
             let offsetY = (viewSize.height - ciImageSize.height * scale) / 2
             
-            
+            print("OFFSET X\(offsetX)")
+            print("OFFSET Y\(offsetY)")
+            print("SCALE\(scale)")
             //faceViewBounds = CGRectApplyAffineTransform(faceViewBounds, CGAffineTransformMakeScale(scale, scale))
             faceViewBounds = faceViewBounds.applying(CGAffineTransform(scaleX: scale, y: scale))
             faceViewBounds.origin.x += offsetX
             faceViewBounds.origin.y += offsetY
+            */
             
-            let faceBox = UIView(frame: faceViewBounds)
+           // let faceBox = UIView(frame: faceViewBounds)
+            faceViewBounds.size.width = faceViewBounds.size.width * 2.5
+            faceViewBounds.size.height = faceViewBounds.size.height * 2.5
             
+            if(faceCount == 0){
+                faceImageView = UIImageView(frame: faceViewBounds)
+                faceImageView?.image = emojiFace
+                camPreview.addSubview(faceImageView!)
+                faceCount = 1
+            } else {
+                //faceImageView?.removeFromSuperview()
+                faceImageView?.frame = faceViewBounds
+                //camPreview.addSubview(faceImageView!)
+            }
+            
+
+            /*
             faceBox.layer.borderWidth = 3
             faceBox.layer.borderColor = UIColor.red.cgColor
             faceBox.backgroundColor = UIColor.clear
             camPreview.addSubview(faceBox)
+             */
             
             if face.hasLeftEyePosition {
                 print("Left eye bounds are \(face.leftEyePosition)")
@@ -349,6 +379,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             if face.hasRightEyePosition {
                 print("Right eye bounds are \(face.rightEyePosition)")
             }
+            
         }
     }
 }
