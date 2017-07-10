@@ -272,8 +272,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
         
         let attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate) as? [String: Any]
         
-        let ciImage = CIImage(cvPixelBuffer: imageBuffer, options: attachments)
-
+        //let ciImage = CIImage(cvPixelBuffer: imageBuffer, options: attachments)
+        let ciImage = CIImage(cvImageBuffer: imageBuffer, options: attachments)
         
         
         let features = faceDetector.features(in: ciImage)
@@ -310,13 +310,24 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     }
     
     func detect(features:[CIFeature], forVideoBox clearAperture: CGRect, inImage ciImage: CIImage) {
+        /*
+        CGSize parentFrameSize = [self.previewView frame].size;
+        NSString *gravity = [self.previewLayer videoGravity];
+        BOOL isMirrored = [self.previewLayer isMirrored];
+        CGRect previewBox = [ViewController videoPreviewBoxForGravity:gravity
+            frameSize:parentFrameSize
+            apertureSize:clearAperture.size];
+        */
         
+        let gravity = self.previewLayer.videoGravity
+        //let previewBox =
         
         // For converting the Core Image Coordinates to UIView Coordinates
         
         let ciImageSize = ciImage.extent.size
         
         var transform = CGAffineTransform(scaleX: 1, y: -1)
+       
         transform = transform.translatedBy(x: 0, y: -ciImageSize.height)
         
         
@@ -325,14 +336,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             print("Found bounds are \(face.bounds)")
             
             // Apply the transform to convert the coordinates
-            var faceViewBounds = face.bounds.applying(transform)
-            //var faceViewBounds = face.bounds
+            //var faceViewBounds = face.bounds.applying(transform)
+            var faceViewBounds = face.bounds
             
             //let faceBox = UIView(frame: face.bounds)
             
             // Calculate the actual position and size of the rectangle in the image view
             
-            /*
+            
             let viewSize = camPreview.bounds.size
             
             let scale = min(viewSize.width / ciImageSize.width,
@@ -343,24 +354,34 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             print("OFFSET X\(offsetX)")
             print("OFFSET Y\(offsetY)")
             print("SCALE\(scale)")
+            print("ciImageSize height\(ciImageSize.height)")
+            print("viewSize height\(viewSize.height)")
+            print("ciImageSize width\(ciImageSize.width)")
+            print("viewSize width\(viewSize.width)")
             //faceViewBounds = CGRectApplyAffineTransform(faceViewBounds, CGAffineTransformMakeScale(scale, scale))
             faceViewBounds = faceViewBounds.applying(CGAffineTransform(scaleX: scale, y: scale))
             faceViewBounds.origin.x += offsetX
             faceViewBounds.origin.y += offsetY
-            */
+            
             
            // let faceBox = UIView(frame: faceViewBounds)
-            faceViewBounds.size.width = faceViewBounds.size.width * 2.5
-            faceViewBounds.size.height = faceViewBounds.size.height * 2.5
+           // faceViewBounds.size.width = faceViewBounds.size.width * 2.5
+           // faceViewBounds.size.height = faceViewBounds.size.height * 2.5
+            
+            //let middleOfFace = CGPoint(x: face.rightEyePosition.x / face.leftEyePosition.x, y: face.leftEyePosition.y)
             
             if(faceCount == 0){
                 faceImageView = UIImageView(frame: faceViewBounds)
+                //faceImageView?.frame.origin = middleOfFace
                 faceImageView?.image = emojiFace
                 camPreview.addSubview(faceImageView!)
                 faceCount = 1
             } else {
                 //faceImageView?.removeFromSuperview()
                 faceImageView?.frame = faceViewBounds
+               // faceImageView?.frame.size.width = (faceImageView?.frame.size.width)! * 2
+               // faceImageView?.frame.size.height = (faceImageView?.frame.size.height)! * 2
+                //faceImageView?.frame.origin = middleOfFace
                 //camPreview.addSubview(faceImageView!)
             }
             
