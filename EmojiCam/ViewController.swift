@@ -319,7 +319,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             apertureSize:clearAperture.size];
         */
         
-        let gravity = self.previewLayer.videoGravity
+       // let gravity = self.previewLayer.videoGravity
         //let previewBox =
         
         // For converting the Core Image Coordinates to UIView Coordinates
@@ -336,8 +336,12 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             print("Found bounds are \(face.bounds)")
             
             // Apply the transform to convert the coordinates
-            //var faceViewBounds = face.bounds.applying(transform)
-            var faceViewBounds = face.bounds
+            var faceViewBounds = face.bounds.applying(transform)
+            faceViewBounds.size.width = faceViewBounds.size.width * 2.5
+            faceViewBounds.size.height = faceViewBounds.size.height * 2.5
+            faceViewBounds.origin.x = faceViewBounds.origin.x / 2.5
+            faceViewBounds.origin.y = faceViewBounds.origin.y / 2.5
+            //var faceViewBounds = face.bounds
             
             //let faceBox = UIView(frame: face.bounds)
             
